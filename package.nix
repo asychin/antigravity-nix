@@ -165,7 +165,7 @@ let
     desktopName = "Google Antigravity";
     comment = "Next-generation agentic IDE";
     exec = "antigravity --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform-hint=auto %U";
-    icon = "antigravity";
+    icon = "google-antigravity";
     categories = [ "Development" "IDE" ];
     startupNotify = true;
     startupWMClass = "Antigravity";
@@ -197,8 +197,8 @@ stdenv.mkDerivation {
 
     # Install icon from local icons directory
     mkdir -p $out/share/pixmaps $out/share/icons/hicolor/512x512/apps
-    cp ${iconFile} $out/share/pixmaps/antigravity.png
-    cp ${iconFile} $out/share/icons/hicolor/512x512/apps/antigravity.png
+    cp ${iconFile} $out/share/pixmaps/google-antigravity.png
+    cp ${iconFile} $out/share/icons/hicolor/512x512/apps/google-antigravity.png
 
     runHook postInstall
   '';
