@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (show branches without deleting)'
+        description: "Dry run (show branches without deleting)"
         required: false
         type: boolean
         default: true
@@ -22,7 +22,6 @@ jobs:
       github.event_name == 'pull_request' &&
       github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     steps:
       - name: Delete branch
         env:
@@ -55,7 +54,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for all branches
+          fetch-depth: 0 # Fetch all history for all branches
 
       - name: Find and delete stale auto-update branches
         env:

@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'package.nix'
+      - "package.nix"
 
 permissions:
   contents: write
@@ -76,7 +76,7 @@ jobs:
           ## Installation
 
           \`\`\`nix
-          inputs.antigravity-nix.url = \"github:jacopone/antigravity-nix/v$VERSION\";
+          inputs.antigravity-nix.url = \"github:asychin/antigravity-nix/v$VERSION\";
           \`\`\`
 
           ## What's New

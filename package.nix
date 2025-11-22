@@ -41,10 +41,11 @@ let
   browserPkg =
     if isAarch64 then chromium
     else if google-chrome != null then google-chrome
-    else throw ''
-      google-chrome is required on ${stdenv.hostPlatform.system} builds.
-      Make sure you have allowUnfree = true or pass a google-chrome package.
-    '';
+    else
+      throw ''
+        google-chrome is required on ${stdenv.hostPlatform.system} builds.
+        Make sure you have allowUnfree = true or pass a google-chrome package.
+      '';
 
   browserCommand =
     if isAarch64 then "chromium" else "google-chrome-stable";

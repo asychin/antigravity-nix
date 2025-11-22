@@ -3,31 +3,53 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+
+      imports = [
+        inputs.treefmt-nix.flakeModule
+      ];
+
+      flake = {
+        # Version information for auto-update
+        version = "1.11.5-5234145629700096";
+
+        # Overlay for easy integration into NixOS configurations
+        overlays.default = final: prev: {
+          google-antigravity = final.callPackage ./package.nix { };
+        };
+
+        # NixOS Module
+        nixosModules.default = import ./modules/nixos.nix;
+
+        # Home Manager Module
+        homeManagerModules.default = import ./modules/home-manager.nix;
+      };
+
+      perSystem = { config, self', inputs', pkgs, system, ... }: {
+        # Allow unfree packages
+        _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           config.allowUnfree = true;
         };
-      in
-      {
+
         packages = {
           default = pkgs.callPackage ./package.nix { };
           google-antigravity = pkgs.callPackage ./package.nix { };
         };
 
-        apps = {
-          default = {
-            type = "app";
-            program = "${self.packages.${system}.default}/bin/antigravity";
-          };
+        apps.default = {
+          type = "app";
+          program = "${self'.packages.default}/bin/antigravity";
         };
 
-        # Development shell for working on this flake
+        # Development shell
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             nix
@@ -50,14 +72,14 @@
             echo "Note: Requires google-chrome-stable to be installed system-wide for browser automation"
           '';
         };
-      }
-    ) // {
-      # Version information for auto-update
-      version = "1.11.5-5234145629700096";
 
-      # Overlay for easy integration into NixOS configurations
-      overlays.default = final: prev: {
-        google-antigravity = final.callPackage ./package.nix { };
+        # Treefmt configuration
+        treefmt = {
+          projectRootFile = "flake.nix";
+          programs.nixpkgs-fmt.enable = true;
+          programs.prettier.enable = true;
+          programs.shfmt.enable = true;
+        };
       };
     };
 }
